@@ -90,11 +90,14 @@ export function awaitingGrades(): string[] {
  * The style may only be one of two strings. Try passing 'medium' and read
  * the error the compiler gives you.
  */
-export function formatterFor(
-  style: 'short' | 'long',
-): (student: Student) => string {
-  // TODO
-  throw new Error('not implemented');
+export function formatterFor(style: 'short' | 'long'): (student: Student) => string {
+  return (student: Student): string => {
+    if (style === 'short') {
+      return student.name;
+    }
+
+    return `${student.name} (${student.deptName}), ${student.totCred} credits`;
+  };
 }
 
 // --- A5. Changing nothing -------------------------------------------------
@@ -104,11 +107,15 @@ export function formatterFor(
  * Everyone else is unchanged, and the students array itself must not change
  * at all: build new objects with the three dots.
  */
-export function raiseCredits(
-  list: Student[],
-  deptName: string,
-  extra: number,
-): Student[] {
-  // TODO
-  throw new Error('not implemented');
+export function raiseCredits(list: Student[], deptName: string, extra: number): Student[] {
+  return list.map(student => {
+    if (student.deptName === deptName) {
+      return {
+        ...student,
+        totCred: student.totCred + extra
+      };
+    }
+
+    return { ...student };
+  });
 }

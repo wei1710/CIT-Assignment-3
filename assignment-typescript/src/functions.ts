@@ -2,7 +2,8 @@
 //
 // Each of these either takes a function, returns one, or both.
 
-import { Student } from './data.js';
+import { group } from 'console';
+import { Student, students } from './data.js';
 
 /** A test on a student. Used by everything below. */
 export type Test = (student: Student) => boolean;
@@ -18,8 +19,7 @@ export type Test = (student: Student) => boolean;
  * One line is enough, once you see what has to be returned.
  */
 export function not(test: Test): Test {
-  // TODO
-  throw new Error('not implemented');
+  return (student: Student) => !test(student);
 }
 
 // --- B2. One pass, two answers -------------------------------------------
@@ -34,8 +34,18 @@ export function not(test: Test): Test {
  * caller can take them apart by position.
  */
 export function partition(list: Student[], test: Test): [Student[], Student[]] {
-  // TODO
-  throw new Error('not implemented');
+  return list.reduce<[Student[], Student[]]>(
+    (groups, student) => {
+      if (test(student)) {
+        groups[0].push(student);
+      } else {
+        groups[1].push(student);
+      }
+
+      return groups;
+    },
+    [[], []]
+  );
 }
 
 // --- B3. Do it once -------------------------------------------------------
@@ -54,8 +64,15 @@ export function partition(list: Student[], test: Test): [Student[], Student[]] {
  * Be ready to say where the saved number lives after once has returned.
  */
 export function once(calculation: () => number): () => number {
-  // TODO
-  throw new Error('not implemented');
+  let result: number | undefined;
+
+  return () => {
+    if (result === undefined) {
+      result = calculation();
+    }
+
+    return result;
+  };
 }
 
 // --- B4. All of them ------------------------------------------------------
@@ -70,17 +87,12 @@ export function once(calculation: () => number): () => number {
  * With no tests at all, everything passes: there is nothing to fail.
  */
 export function allOf(...tests: Test[]): Test {
-  // TODO
-  throw new Error('not implemented');
+  return (student: Student) => tests.every(test => test(student));
 }
 
 // Two small helpers to build tests with, given to you.
-export const inDepartment =
-  (deptName: string): Test =>
-  (student: Student) =>
-    student.deptName === deptName;
+export const inDepartment = (deptName: string): Test =>
+  (student: Student) => student.deptName === deptName;
 
-export const atLeast =
-  (credits: number): Test =>
-  (student: Student) =>
-    student.totCred >= credits;
+export const atLeast = (credits: number): Test =>
+  (student: Student) => student.totCred >= credits;
